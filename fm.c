@@ -28,23 +28,21 @@
 #include <sys/ioctl.h>
 #include <linux/videodev.h>
 
-/* please don't report me to the committee to abolish global variables ...
-
-   they've been removed! */
-
 void help(char *prog)
 {
-	printf ("usage: %s [-h] [-o] [-q] <freq>|on|off [<volume>]\n", prog); 
+	printf ("usage: %s [-h] [-o] [-q] [-t <tuner>] <freq>|on|off [<volume>]\n", prog); 
 	printf ("\n");
-	printf ("-h       - display this help\n");
-	printf ("-o       - override frequency range limits in card\n");
-	printf ("-q       - quiet mode\n");
-	printf ("<freq>   - frequency in MHz (i.e. 94.3)\n");
-	printf ("on       - turn radio on\n");
-	printf ("off      - turn radio off (mute)\n");
-	printf ("+        - increase volume\n");
-	printf ("-        - decrease volume\n");
-	printf ("<volume> - intensity (0-65535)\n");
+	printf ("-h         - display this help\n");
+	printf ("-o         - override frequency range limits in card\n");
+	printf ("-q         - quiet mode\n");
+	printf ("-t <tuner> - select tuner <tuner>\n");
+	printf ("<tuner>    - tuner number - first one is 0, next one 1, etc\n");
+	printf ("<freq>     - frequency in MHz (i.e. 94.3)\n");
+	printf ("on         - turn radio on\n");
+	printf ("off        - turn radio off (mute)\n");
+	printf ("+          - increase volume\n");
+	printf ("-          - decrease volume\n");
+	printf ("<volume>   - intensity (0-65535)\n");
 	
 	exit (1);
 }
@@ -85,29 +83,28 @@ int main(int argc, char **argv)
 	char		*progname;
 	extern	char	*optarg;
 	extern	int	optind, opterr, optopt;
+	int		tuner = 0;
 
 	if ((argc < 2) || (argc > 4)) {
-		printf ("usage: %s [-h] [-o] [-q] <freq>|on|off [<volume>]\n", argv[0]); 
+		printf ("usage: %s [-h] [-o] [-q] [-t <tuner>] <freq>|on|off [<volume>]\n", argv[0]); 
 		exit (1);
 	}
 
 	progname = argv[0];	/* used after getopt munges argv[] */
 
-	fd = open ("/dev/radio0", O_RDONLY); 
-	if (fd == -1) {
-		perror ("Unable to open /dev/radio0");
-		exit (1);
-	}
-
 	getconfig(&defaultvol, &increment);
 
-	while ((i = getopt(argc, argv, "+qho")) != EOF) {
+	while ((i = getopt(argc, argv, "+qhot:")) != EOF) {
 		switch (i) {
 			case 'q':
 				quiet = 1;
 				break;
 			case 'o':
 				override = 1;
+				break;
+			case 't':
+				tuner = atoi(optarg);
+				break;
 			case 'h':
 			default:
 				help(argv[0]);
@@ -125,6 +122,13 @@ int main(int argc, char **argv)
 
 	if (argc == 0)		/* no frequency, on|off, or +|- given */
 		help (progname);
+
+	/* moved here so -h works without a device */
+	fd = open ("/dev/radio0", O_RDONLY); 
+	if (fd == -1) {
+		perror ("Unable to open /dev/radio0");
+		exit (1);
+	}
 
 	if (!strcmp("off", argv[0])) {		/* mute the radio */
 		va.audio = 0;
@@ -177,7 +181,13 @@ int main(int argc, char **argv)
 
 	/* at this point, we are trying to tune to a frequency */
 
-	vt.tuner = 0;
+	vt.tuner = tuner;
+	ret = ioctl(fd, VIDIOCSTUNER, &vt);	/* set tuner # */
+	if (ret < 0) {
+		perror ("set tuner");
+		exit (1);
+	}
+
 	ret = ioctl(fd, VIDIOCGTUNER, &vt);	/* get frequency range */
 
 	if (ret == -1 || (vt.flags & VIDEO_TUNER_LOW) == 0)
@@ -197,6 +207,10 @@ int main(int argc, char **argv)
 
 	/* frequency sanity checked, proceed */
 	ret = ioctl (fd, VIDIOCSFREQ, &freq);
+	if (ret < 0) {
+		perror ("set freq");
+		exit (1);
+	}
 
 	va.audio = 0;
 	va.volume = tunevol;

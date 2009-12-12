@@ -71,6 +71,17 @@ say the increment value for volume changes with + and - is 6554 -
 approximately 10%.  These values were obtained by playing around with
 the numbers until things behaved the way I wanted. 
 
+There are some other options available:
+
+-o - override card frequency range - Some radio card drivers don't actively
+     enforce the frequencies that you can tune to.  Use this switch and fm
+     will send any frequency you want to the driver.
+
+-t - select tuner - Certain cards have multiple tuners - usually used for
+     different bands.  The ADS Cadet driver is apparently the first one to
+     support this v4l feature.  The first tuner is 0, the second is 1, and
+     so on.  
+
 fmscan
 ======
 

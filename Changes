@@ -1,3 +1,6 @@
+Mon Apr 12 20:32:13 MDT 1999
+ - -t option for selecting the tuner on multi-tuner boards (radio-cadet, etc)
+
 Wed Feb  3 13:13:01 MST 1999
  - fmtools 0.2.4 released
  - 'devices' target added to Makefile
