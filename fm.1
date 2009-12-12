@@ -1,0 +1,104 @@
+.TH FM 1 "fm 0.99.1"
+.SH NAME
+fm \- control frequency, volume, mute/unmute of FM radio card
+.SH SYNOPSIS
+.HP
+.B fm
+[
+.B \-h
+] [
+.B \-o
+] [
+.B \-q
+] [
+.B \-d
+.I device
+] [
+.B \-t
+.I tuner
+]
+.B on
+|
+.B off
+|
+.B +
+|
+.B \-
+|
+.B freq
+[
+.I volume
+]
+.SH DESCRIPTION
+.B fm
+is a program to control the frequency, volume, and mute/unmute state
+of an FM radio card, using the video4linux interface introduced in
+2.1.x series Linux kernels.
+.SS OPTIONS
+.PP
+.TP
+.B \-h
+Print a usage message to standard output, and exit.
+.TP
+.B \-o
+Ignore frequency range limits of card.  Use if you suspect that the
+card supports a wider frequency range than its driver believes.
+.TP
+.B \-q
+Quiet mode.  Keeps information on station and volume from being
+printed on standard output.
+.TP
+\fB\-d \fIdevice
+Sets \fIdevice\fR as the device to tune.  The default is
+\fB/dev/radio0\fR.
+.TP
+\fB\-t \fItuner
+Sets \fItuner\fR as the tuner on the selected device to adjust.  The
+default is tuner 0.  Most radio devices have only a single tuner.
+.TP
+.BI freq
+Frequency to tune the radio to, in MHz.  For instance, \fB88.9\fR
+specifies a frequency of 88.9 MHz.  AM tuner values are also specified
+in MHz; for instance, 530 kHz would be specified as \fB.530\fR.
+.TP
+.BI on
+Turn the radio on (unmute).
+.TP
+.BI off
+Turn the radio off (mute).
+.TP
+.BI volume
+Specify the desired volume, in percent.  Not all radio devices support
+volume control.
+.TP
+.BI +
+Increase the current volume.
+.TP
+.BI -
+Decrease the current volume.
+.SH FILES
+.TP
+\fI$HOME\fB/.fmrc\fR
+Optional configuration file used to set default volume and
+volume increments, in percents.  Specify default volume with a line of
+the form
+.BI VOL
+percent.  Specify volume increments with a line of the form
+.BI INCR
+percent.
+
+If this file does not exist then the defaults are 12.5% volume and 10%
+volume increments.
+.SH SEE ALSO
+.TP
+Additional documentation:
+.B /usr/doc/fmtools/README
+.TP
+The fmtools homepage:
+.B http://www.exploits.org/v4l/fmtools.html
+.TP
+The video4linux webpage:
+.B http://roadrunner.swansea.uk.linux.org/v4l.shtml
+.SH AUTHORS
+Russell Kroll <rkroll@exploits.org>.  This manpage written by Ben
+Pfaff <pfaffben@msu.edu> for Debian GNU/Linux.

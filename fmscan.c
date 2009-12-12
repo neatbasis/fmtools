@@ -14,7 +14,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 #include <math.h>
@@ -28,6 +28,8 @@
 #include <sys/ioctl.h>
 #include <linux/videodev.h>
 
+#include "version.h"
+
 #define TRIES		25		/* get 25 samples                 */
 #define LOCKTIME	400000		/* wait 400ms for card to lock on */
 #define SAMPLEDELAY	15000		/* wait 15ms between samples      */
@@ -35,7 +37,10 @@
 
 void help(char *prog)
 {
+	printf("fmtools fmscan version %s\n\n", FMT_VERSION);
 	printf("usage: %s [-h] [-d <dev>] [-s <freq>] [-e <freq>] [-i <freq>]\n\n", prog);
+
+	printf("Auxiliary program to scan a frequency band for radio stations.\n\n");
 
 	printf("  -h        - display this help\n");
 	printf("  -d <dev>  - select device (default: /dev/radio0)\n");
@@ -44,7 +49,7 @@ void help(char *prog)
 	printf("  -i <freq> - set increment value between channels to <freq>\n");
 	printf("  <freq>    - a value in the format nnn.nn (MHz)\n");
 
-	exit (0);
+	exit(0);
 }
 
 int main(int argc, char **argv)
@@ -153,6 +158,6 @@ int main(int argc, char **argv)
 			      (freq / (double) fact), perc * 100.0);
 	}
 
-	close (fd);
+	close(fd);
 	return 0;
 }

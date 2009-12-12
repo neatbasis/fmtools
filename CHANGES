@@ -1,3 +1,38 @@
+0.99.1:
+
+Fri Aug 16 23:08:30 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm, fmscan: fix the FSF's address in the headers
+
+Fri Aug 16 23:07:49 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - COPYING: put in the modern version of the GPL v2, with the correct
+   address for the FSF.
+
+Fri Aug 16 23:05:33 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - Makefile: reworked a bunch of stuff, and added such useful things
+   like install targets.  Hopefully this will make packaging less of 
+   a hack.
+
+Fri Aug 16 22:55:41 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm: do the VIDIOCGAUDIO first so there's always good data in the struct
+
+Fri Aug 16 22:48:10 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm.1: incorporated the man page written by Ben Pfaff.
+
+Fri Aug 16 22:47:01 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm: set va.balance to 32768 rather than relying on whatever junk
+   happens to be in the struct.   Reported by ahmet inan.
+
+Fri Aug 16 22:43:47 CDT 2002 / Russell Kroll <rkroll@exploits.org>
+
+ - fm: applied patch from Viktor Rosenfeld to fix the rounding so that
+   channels like 99.95 MHz can be tuned.
+
 0.99.0:
 
 Sat Feb  3 22:41:12 CST 2001 - Russell Kroll <rkroll@exploits.org>
