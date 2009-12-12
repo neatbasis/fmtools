@@ -1,3 +1,13 @@
+1.0.1:
+
+Sat Oct 7 1:05:00 PDT 2006 / Ben Pfaff <blp@cs.stanford.edu>
+
+- Make fm able to sleep for a user-specified time, or forever, after
+  applying settings.  This makes fm usable with radio tuner drivers
+  that turn off the radio after the fd used for tuning is closed.
+
+  Idea and patch from Dave Ulrick <d-ulrick@insightbb.com>.
+
 1.0:
 
 Sat Sep 3 12:21:00 PDT 2004 / Ben Pfaff <blp@cs.stanford.edu>

@@ -1,3 +1,17 @@
+fmtools (1.0.1) unstable; urgency=low
+
+  * New upstream release: 
+
+    Make fm able to sleep for a user-specified time, or forever, after
+    applying settings.  This makes fm usable with radio tuner drivers
+    that turn off the radio after the fd used for tuning is closed.
+
+    Idea and patch from Dave Ulrick <d-ulrick@insightbb.com>.
+  
+  * Upgrade to debhelper V5.
+    
+ -- Ben Pfaff <pfaffben@debian.org>  Sat,  7 Oct 2006 13:35:35 -0700
+
 fmtools (1.0) unstable; urgency=low
 
   * New upstream release.  Now a native Debian package.

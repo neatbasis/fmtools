@@ -24,8 +24,6 @@ fmscan \- scan FM band for radio stations
 is a program to scan a frequency band for radio stations, using the
 video4linux interface introduced in 2.1.x series Linux kernels.  It
 shows which ones have a accumulated signal strength of 50% or higher.
-This process can take a while, and results vary greatly depending on the
-radio card in use.
 .SS OPTIONS
 .PP
 .TP
@@ -48,6 +46,10 @@ Increment between scanned channels, in MHz.  Default: 0.2.
 \fB\-t \fIpercent
 Signal strength threshold to consider a channel.  Default: 50%.
 .SH BUGS
+This process can take a while, and results vary greatly depending on the
+radio card in use.  If your card's hardware cannot report signal
+strength, it will not produce useful results.
+.PP
 This program may not do much if your radio card's driver doesn't support
 fine tuning in 1/16000 MHz offsets.  By default, v4l assumes 1/16 MHz
 tuning units, which introduces evil rounding errors on many frequencies.

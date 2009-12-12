@@ -16,6 +16,13 @@ fm \- control frequency, volume, mute/unmute of FM radio card
 ] [
 .B \-t
 .I tuner
+] [
+.B \-T
+.B none
+|
+.B forever
+|
+.I time
 ]
 .B on
 |
@@ -56,6 +63,24 @@ Sets \fIdevice\fR as the device to tune.  The default is
 Sets \fItuner\fR as the tuner on the selected device to adjust.  The
 default is tuner 0.  Most radio devices have only a single tuner.
 .TP
+\fB\-T none \fR| \fBforever \fR| \fItime
+After tuning, sleep for the time specified or forever.  Time is
+specified in seconds by default.  A suffix of
+.B m
+indicates minutes,
+.B h
+indicates hours, or
+.D d
+indicates days.
+.IP
+The
+.B -T
+option is useful with radio card drivers that only maintain the tuner
+settings while the tuner's file descriptor remains open.  Try using
+this option if running
+.B fm
+ordinarily produces only a single "pop" from your speakers.
+.TP
 .BI freq
 Frequency to tune the radio to, in MHz.  For instance, \fB88.9\fR
 specifies a frequency of 88.9 MHz.  AM tuner values are also specified
@@ -76,19 +101,26 @@ Increase the current volume.
 .TP
 .BI -
 Decrease the current volume.
-.SH FILES
+.SH CONFIGURATION
+.B fm
+reads \fI$HOME\fB/.fmrc\fR, if it exists, to obtain default settings.
+Each line may take one of the following forms:
 .TP
-\fI$HOME\fB/.fmrc\fR
-Optional configuration file used to set default volume and
-volume increments, in percents.  Specify default volume with a line of
-the form
-.BI VOL
-percent.  Specify volume increments with a line of the form
-.BI INCR
-percent.
-
-If this file does not exist then the defaults are 12.5% volume and 10%
-volume increments.
+.BR VOL \ percent
+Specifies default volume (default: 12.5%).
+.TP
+.BR INCR \ percent
+Volume increment used for
+.B +
+and
+.B -
+options (default: 10%).
+.TP
+.BR TIME
+Default sleep time (default:
+.BR none ).
+.PP
+All other lines are ignored.
 .SH SEE ALSO
 .TP
 Additional documentation:
@@ -101,4 +133,5 @@ The video4linux webpage:
 .B http://www.exploits.org/v4l/
 .SH AUTHORS
 Russell Kroll <rkroll@exploits.org>, now maintained by Ben Pfaff
-<blp@cs.stanford.edu.>. This manpage written by Ben Pfaff.
+<blp@cs.stanford.edu>.  Sleep time feature contributed by Dave Ulrick
+<d-ulrick@insightbb.com>.  This manpage written by Ben Pfaff.
