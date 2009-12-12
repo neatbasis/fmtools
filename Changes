@@ -1,3 +1,20 @@
+0.99.0:
+
+Sat Feb  3 22:41:12 CST 2001 - Russell Kroll <rkroll@exploits.org>
+
+ - Final cleanups for 0.99.0.  This source has been sitting around for
+   awhile, so it's probably time to push towards 1.0 and call it done.
+   How much can you do to a pair of radio programs, anyway?
+
+Thu Jan  4 17:29:49 CST 2001 - Russell Kroll <rkroll@exploits.org>
+
+ - fmscan: ioctl/code cleanups, ala fm
+ - fmscan: -d <dev> support
+ - fm: -d <dev> support for multiple devices (/dev/radio1 and so on)
+ - fm: ioctl results checked, other coding cleanups
+
+0.2.5 and earlier:
+
 Mon Apr 12 20:32:13 MDT 1999
  - -t option for selecting the tuner on multi-tuner boards (radio-cadet, etc)
 

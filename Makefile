@@ -1,7 +1,7 @@
 # fmtools Makefile - just the basics for now
 
-CC = gcc
-CFLAGS = -g -Wall
+CC	= gcc
+CFLAGS	= -Wall -O2
 
 all : fm fmscan
 

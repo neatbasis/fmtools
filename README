@@ -1,4 +1,4 @@
-* fmtools information
+* fmtools: simple Video for Linux radio card programs
 *
 * Russell Kroll <rkroll@exploits.org>
 *
@@ -9,9 +9,10 @@
 Package information
 ===================
 
-This is intended to become a collection of interesting programs that 
-control the v4l radio card drivers.  Right now, this "collection" is
-merely a pair of hopefully interesting utilities:
+This is a pair of hopefully useful control programs for Video for Linux
+(v4l) radio card drivers.  The focus is on control, so you may find these
+programs a bit unfriendly.  Users are encouraged to investigate the source
+and create wrappers or new programs based on this design.
 
  fm      - a simple tuner
  fmscan  - a simple band scanner
@@ -19,9 +20,9 @@ merely a pair of hopefully interesting utilities:
 fm
 ==
 
-This is a very simple controller that will send commands to tuner 0 of the 
-first v4l radio card on the system.  It was written mostly so I could have
-something to send commands at the drivers being created or debugged here.
+This is a small controller that will send commands to your v4l radio
+cards.  It was written mostly so I could have something to send commands
+at the drivers being created or debugged here.
 
 I'll discuss the options a little, but it should be fairly simple to run.
 
@@ -38,7 +39,7 @@ link to the value used in the v4l API by the actual drivers.
 There is a -q option that will suppress messages about tuning, volume
 changes, and so forth.  Keeping your tuner quiet may not seem like such
 a useful thing at first, but it can be very handy inside an IRC script.
-Having a program scribble over your channel window when you do /KILO
+Having a program scribble on your channel window when you do /KILO
 or similar is not enjoyable.
 
 Besides direct tuning, there are also "on" and "off" commands.  They will
@@ -69,18 +70,40 @@ INCR 6554
 Here we say the default volume is 32000 - just shy of 50%.  Then we
 say the increment value for volume changes with + and - is 6554 - 
 approximately 10%.  These values were obtained by playing around with
-the numbers until things behaved the way I wanted. 
+the numbers until things behaved the way I wanted.   Be aware that some
+cards only have a couple of volume steps, so you may not notice a change
+right away.
+
+The Cadet hardware, for example, has two settings: off and *VERY LOUD*.
+Any volume setting will turn it on.  The Aztech card has 4 settings (off,
+low, medium, high) and you'll notice it change when you cross the
+boundaries.  The Aimslab RadioReveal card is actually based on analog
+volume control, with 10 steps emulated within that range.
 
 There are some other options available:
 
--o - override card frequency range - Some radio card drivers don't actively
-     enforce the frequencies that you can tune to.  Use this switch and fm
-     will send any frequency you want to the driver.
+-d - select device.  If you have more than one v4l radio card in your
+     system for some reason, use -d <device> to select the right one. 
+     This is probably only useful if you like writing drivers for these
+     things.
+
+-o - override card frequency range - Some radio card drivers don't
+     actively enforce the frequencies that you can tune to.  Use this
+     switch and fm will send any frequency you want to the driver.  This
+     alone will not make an unmodified card receive frequencies from
+     outside the design range.  You have to change the tuner hardware in
+     order to enjoy such broadcasts.
 
 -t - select tuner - Certain cards have multiple tuners - usually used for
-     different bands.  The ADS Cadet driver is apparently the first one to
-     support this v4l feature.  The first tuner is 0, the second is 1, and
-     so on.  
+     different bands.  The ADS Cadet driver is known to support this,
+     specifically using 0 for FM and 1 for AM.  To tune AM frequencies,
+     remember that fm expects MHz style input, and do the following:
+
+     For 1200 kHz, enter 'fm -t 1 1.2', since 1.2 MHz == 1200 kHz.
+
+     Yes, tuning am frequencies with 'fm' seems backwards, but that's
+     life.  Crafty hackers may want to add some code to make the program
+     check argv[0] and behave differently.
 
 fmscan
 ======
@@ -94,28 +117,27 @@ By default, the range scanned is 87.9-107.9 MHz in .2 MHz steps, since
 that's the standard band here in the USA.  Users in other regions should
 set the appropriate information for best results.
 
-This program didn't work at all with the radio-aimslab driver until I got
-around to adding fine tuning support.  If you have one of these cards and
-it seems to report 0% for all stations, make sure you have patched your
-driver.
-
-Also, the radio-aztech driver doesn't seem to do anything useful with
-this.  This is particularly disturbing, since that card supposedly has
-both a signal meter and a stereo detector.  The 0.50 patch to add fine
-tuning hasn't helped.
+This program may not do much if your radio card's driver doesn't support
+fine tuning in 1/16000 MHz offsets.  By default, v4l assumes 1/16 MHz
+tuning units, which introduces evil rounding errors on many frequencies.
+If in doubt, grep for VIDEO_TUNER_LOW in your driver's source.
 
 v4l /dev entries
 ================
 
-This program uses /dev/radio0.  If you have been using v4l radio cards
-for awhile, you may already have a /dev/radio.  That is now "legacy", and
-should be symlinked to /dev/radio0.  To create the proper device entry, 
-either do "make devices" as root, or create it by hand with mknod (c 81 64).
+By default, these programs use /dev/radio0 to access the hardware.  This
+can be changed with -d <device> if you have more than one.   If you have
+been using v4l radio cards for awhile, you may already have a /dev/radio.
+That is now "legacy", and should be symlinked to /dev/radio0.  To create
+the proper device entry, either do "make devices" as root, or create it
+by hand with mknod (c 81 64).
 
 The proper device listing looks something like this in 'ls -la' ...
 
 lrwxrwxrwx   1 root     root           11 Jan 20 03:19 /dev/radio -> /dev/radio0
 crw-r--r--   1 root     root      81,  64 Jan 20 03:19 /dev/radio0
+
+Other cards follow the same pattern - radio1 would be (81, 65), and so on.
 
 The owner and permission data should be set to values that agree with
 your system's personality.  If it's mostly a solitary system with few or
@@ -137,5 +159,5 @@ driver tree was eventually redone under the expanded Video for Linux API.
 
 These programs are not compatible with that interface.  Very few things
 are.  If you are still using it, you should throw it away and upgrade to
-the V4L drivers.  There have been many improvements since then, and you
+the v4l drivers.  There have been many improvements since then, and you
 will be able to use the fmtools programs on your card.

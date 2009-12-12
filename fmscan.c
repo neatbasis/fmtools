@@ -18,6 +18,7 @@
  */
 
 #include <math.h>
+#include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -27,50 +28,53 @@
 #include <sys/ioctl.h>
 #include <linux/videodev.h>
 
-void help (char *prog)
+#define TRIES		25		/* get 25 samples                 */
+#define LOCKTIME	400000		/* wait 400ms for card to lock on */
+#define SAMPLEDELAY	15000		/* wait 15ms between samples      */
+#define THRESHOLD	.5		/* minimum acceptable signal %    */
+
+void help(char *prog)
 {
-	printf ("usage: %s [-h] [-s <freq>] [-e <freq>] [-i <freq>]\n\n", prog);
+	printf("usage: %s [-h] [-d <dev>] [-s <freq>] [-e <freq>] [-i <freq>]\n\n", prog);
 
-	printf ("-h        - display this help\n");
-	printf ("-s <freq> - set start of scanning range to <freq>\n");
-	printf ("-e <freq> - set end of scanning range to <freq>\n");
-	printf ("-i <freq> - set increment value between channels to <freq>\n");
-	printf ("<freq>    - a value in the format nnn.nn (MHz)\n");
+	printf("  -h        - display this help\n");
+	printf("  -d <dev>  - select device (default: /dev/radio0)\n");
+	printf("  -s <freq> - set start of scanning range to <freq>\n");
+	printf("  -e <freq> - set end of scanning range to <freq>\n");
+	printf("  -i <freq> - set increment value between channels to <freq>\n");
+	printf("  <freq>    - a value in the format nnn.nn (MHz)\n");
 
-	exit (1);
+	exit (0);
 }
 
 int main(int argc, char **argv)
 {
-	int	fd, ret, i, tries = 25;
+	int	fd, ret, i, tries = TRIES;
 	struct	video_tuner vt;
 	float	perc, begval, incval, endval;
 	long	lowf, highf, freq, totsig, incr, fact;
-	char	*progname;
+	char	*progname, *dev = NULL;
 
 	progname = argv[0];	/* getopt munges argv[] later */
-
-	fd = open ("/dev/radio0", O_RDONLY); 
-	if (fd == -1) {
-		perror ("Unable to open /dev/radio0");
-		exit (1);
-	}
 
 	/* USA defaults */
 	begval = 87.9;		/* start at 87.9 MHz */
 	incval = 0.20;		/* increment 0.2 MHz */
 	endval = 107.9;		/* stop at 107.9 MHz */
 
-	while ((i = getopt(argc, argv, "+e:hi:s:")) != EOF) {
+	while ((i = getopt(argc, argv, "+e:hi:s:d:")) != EOF) {
 		switch (i) {
+			case 'd':
+				dev = strdup(optarg);
+				break;
 			case 'e':
-				endval = atof (optarg);
+				endval = atof(optarg);
 				break;
 			case 'i':
-				incval = atof (optarg);
+				incval = atof(optarg);
 				break;
 			case 's':
-				begval = atof (optarg);
+				begval = atof(optarg);
 				break;
 			case 'h': 
 			default:
@@ -79,8 +83,21 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (!dev)
+		dev = strdup("/dev/radio0");	/* default */
+
+	fd = open(dev, O_RDONLY);
+	if (fd < 0) {
+		fprintf(stderr, "Unable to open %s: %s\n", dev, strerror(errno));
+		exit(1);
+	}
+
 	vt.tuner = 0;
 	ret = ioctl(fd, VIDIOCGTUNER, &vt);	/* get initial info */
+	if (ret < 0) {
+		perror("ioctl VIDIOCGTUNER");
+		exit(1);
+	}
 
 	if ((vt.flags & VIDEO_TUNER_LOW) == 0)
 		fact = 16;
@@ -93,37 +110,49 @@ int main(int argc, char **argv)
 
 	incr = fact * incval;
 
-	printf ("Scanning range: %2.1f - %2.1f MHz (%2.1f MHz increments)...\n", 
+	printf("Scanning range: %2.1f - %2.1f MHz (%2.1f MHz increments)...\n", 
 		begval, endval, incval);
 
 	for (freq = lowf; freq <= highf; freq += incr) {
-		ioctl (fd, VIDIOCSFREQ, &freq);		/* tune */
+		ret = ioctl(fd, VIDIOCSFREQ, &freq);		/* tune */
 
-		printf ("%2.1f: checking\r", (freq / (double) fact));
+		if (ret < 0) {
+			perror("ioctl VIDIOCSFREQ");
+			exit(1);
+		}
 
-		fflush (stdout);
-		usleep (400000);		/* let it lock on */
+		printf("%2.1f:\r", (freq / (double) fact));
+		fflush(stdout);
+		usleep(LOCKTIME);		/* let it lock on */
 	
 		totsig = 0;
-		for (i = 0; i < tries; i++) {
+		for (i = 1; i < tries+1; i++) {
 			vt.tuner = 0;
 			ret = ioctl(fd, VIDIOCGTUNER, &vt);	/* get info */
+			if (ret < 0) {
+				perror("ioctl VIDIOCGTUNER");
+				exit(1);
+			}
+
 			totsig += vt.signal;
+			perc = (totsig / (65535.0 * i));
+
+			printf("%2.1f: checking: %3.1f%% (%d/%d)    \r", 
+			      (freq / (double) fact), perc * 100.0, i, tries);
 			fflush(stdout);
-			usleep (15000); 
+			usleep(SAMPLEDELAY); 
 		}
 
 		/* clean up the display */
-		printf ("                  \r");	
+		printf("                                              \r");	
 
 		perc = (totsig / (65535.0 * tries));
 
-		if (perc > .5) 
-			printf ("%2.1f: %3.1f%%          \n", 
-				(freq / (double) fact), perc * 100.0);
+		if (perc > THRESHOLD) 
+			printf("%2.1f: %3.1f%%          \n", 
+			      (freq / (double) fact), perc * 100.0);
 	}
 
 	close (fd);
-
-	return (0);
+	return 0;
 }
