@@ -1,0 +1,59 @@
+fmtools (1.0) unstable; urgency=low
+
+  * New upstream release.  Now a native Debian package.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sat,  4 Sep 2004 12:20:06 -0700
+
+fmtools (0.99.1-4) unstable; urgency=low
+
+  * Fix doubled manpages in 0.99.1-2.  Oops!
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sun, 15 Aug 2004 17:08:54 -0700
+
+fmtools (0.99.1-2) unstable; urgency=low
+
+  * Patch from "Gregory P. Smith" <greg-debian@electricrain.com> to add
+    user-definable threshold to fmscan.  Modified patch slightly to match
+    the command-line argument a float instead of an int.  Closes: #264500.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sun, 15 Aug 2004 16:56:20 -0700
+
+fmtools (0.99.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+  * Don't use kernel headers.  Closes: #223161.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sat,  6 Dec 2003 22:38:53 -0800
+
+fmtools (0.99.0-1) unstable; urgency=low
+
+  * New upstream version.  Closes: 90705
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sun, 25 Mar 2001 15:54:07 -0500
+
+fmtools (0.2.1-2) unstable; urgency=low
+
+  * Redo with debhelper.  Closes: #91157.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sun, 25 Mar 2001 12:16:45 -0500
+
+fmtools (0.2.1-1) unstable; urgency=low
+
+  * New upstream source.
+  
+  * Fix copyright file.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Thu, 30 Jul 1998 11:30:24 -0400
+
+fmtools (0.2.0-1) unstable; urgency=low
+
+  * Added Debian control files.
+
+  * Put in my VIDEO_TUNER_LOW fix.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Fri, 10 Jan 1997 15:06:38 -0500
+
+Local Variables:
+mode:debian-changelog
+End:

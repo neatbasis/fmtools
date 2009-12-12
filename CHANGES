@@ -1,3 +1,18 @@
+1.0:
+
+Sat Sep 3 12:21:00 PDT 2004 / Ben Pfaff <blp@cs.stanford.edu>
+
+- New maintainer.  New home page is http://benpfaff.org/fmtools
+
+- Updated email addresses.
+
+- Integrated Debian packaging.
+
+- Made fmscan threshold configurable from command line.
+
+- Use videodev.h header detached from kernel to avoid including kernel
+  headers.
+
 0.99.1:
 
 Fri Aug 16 23:08:30 CDT 2002 / Russell Kroll <rkroll@exploits.org>

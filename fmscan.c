@@ -24,9 +24,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <asm/types.h>
 #include <sys/ioctl.h>
-#include <linux/videodev.h>
+#include "videodev.h"
 
 #include "version.h"
 
@@ -38,7 +37,7 @@
 void help(char *prog)
 {
 	printf("fmtools fmscan version %s\n\n", FMT_VERSION);
-	printf("usage: %s [-h] [-d <dev>] [-s <freq>] [-e <freq>] [-i <freq>]\n\n", prog);
+	printf("usage: %s [-h] [-d <dev>] [-s <freq>] [-e <freq>] [-i <freq>] [-t <%%>]\n\n", prog);
 
 	printf("Auxiliary program to scan a frequency band for radio stations.\n\n");
 
@@ -47,6 +46,7 @@ void help(char *prog)
 	printf("  -s <freq> - set start of scanning range to <freq>\n");
 	printf("  -e <freq> - set end of scanning range to <freq>\n");
 	printf("  -i <freq> - set increment value between channels to <freq>\n");
+	printf("  -t <%%>    - set signal strength percentage to lock onto <%%>\n");
 	printf("  <freq>    - a value in the format nnn.nn (MHz)\n");
 
 	exit(0);
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 {
 	int	fd, ret, i, tries = TRIES;
 	struct	video_tuner vt;
-	float	perc, begval, incval, endval;
+	float	perc, begval, incval, endval, threshold;
 	long	lowf, highf, freq, totsig, incr, fact;
 	char	*progname, *dev = NULL;
 
@@ -67,7 +67,9 @@ int main(int argc, char **argv)
 	incval = 0.20;		/* increment 0.2 MHz */
 	endval = 107.9;		/* stop at 107.9 MHz */
 
-	while ((i = getopt(argc, argv, "+e:hi:s:d:")) != EOF) {
+        threshold = THRESHOLD;
+
+	while ((i = getopt(argc, argv, "+e:hi:s:d:t:")) != EOF) {
 		switch (i) {
 			case 'd':
 				dev = strdup(optarg);
@@ -81,6 +83,9 @@ int main(int argc, char **argv)
 			case 's':
 				begval = atof(optarg);
 				break;
+                        case 't':
+                                threshold = atof(optarg)/100.;
+                                break;
 			case 'h': 
 			default:
 				help(progname);
@@ -153,7 +158,7 @@ int main(int argc, char **argv)
 
 		perc = (totsig / (65535.0 * tries));
 
-		if (perc > THRESHOLD) 
+		if (perc > threshold) 
 			printf("%2.1f: %3.1f%%          \n", 
 			      (freq / (double) fact), perc * 100.0);
 	}

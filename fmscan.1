@@ -44,6 +44,9 @@ Ending frequency for scan, in MHz.  Default: 107.9.
 .TP
 \fB\-i \fIfreq
 Increment between scanned channels, in MHz.  Default: 0.2.
+.TP
+\fB\-t \fIpercent
+Signal strength threshold to consider a channel.  Default: 50%.
 .SH BUGS
 This program may not do much if your radio card's driver doesn't support
 fine tuning in 1/16000 MHz offsets.  By default, v4l assumes 1/16 MHz
@@ -62,16 +65,5 @@ The fmtools homepage:
 The video4linux webpage:
 .B http://roadrunner.swansea.uk.linux.org/v4l.shtml
 .SH AUTHORS
-Russell Kroll <rkroll@exploits.org>.  This manpage written by Ben
-Pfaff <pfaffben@msu.edu> for Debian GNU/Linux, based on 
-fmtools source and documentation.
-----------------------------------------------------------------------
-
-HTH,
-
-Ben.
-
--- 
-"I didn't say it was your fault.
- I said I was going to blame it on you."
-
+Russell Kroll <rkroll@exploits.org>, now maintained by Ben Pfaff
+<blp@cs.stanford.edu.>. This manpage written by Ben Pfaff.

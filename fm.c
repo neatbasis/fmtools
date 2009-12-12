@@ -25,9 +25,8 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <string.h>
-#include <asm/types.h>
 #include <sys/ioctl.h>
-#include <linux/videodev.h>
+#include "videodev.h"
 
 #include "version.h"
 
