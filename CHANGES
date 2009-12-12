@@ -1,3 +1,14 @@
+1.0.2:
+
+Thu Nov 23 1:41:00 PDT 2006 / Ben Pfaff <blp@cs.stanford.edu>
+
+- Fix version number reported by fm and fmscan programs, as well as
+  the version number included in the manpages.
+
+  Bug report by "Petr Slansky" <slansky@usa.net>.
+
+- No functional changes.
+
 1.0.1:
 
 Sat Oct 7 1:05:00 PDT 2006 / Ben Pfaff <blp@cs.stanford.edu>

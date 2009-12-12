@@ -1,2 +1,2 @@
-#define FMT_VERSION "0.99.1"
+#define FMT_VERSION "1.0.2"
 
