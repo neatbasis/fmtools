@@ -1,0 +1,22 @@
+Wed Feb  3 13:13:01 MST 1999
+ - fmtools 0.2.4 released
+ - 'devices' target added to Makefile
+ - documentation updated for fmscan and /dev/radio0
+ - programs now use /dev/radio0 instead of old(er) /dev/radio
+ - fmscan added
+ - small code cleanups
+ - -o added to oneliner usage display
+
+Sat Jan 16 23:55:15 MST 1999
+ - fmtools 0.2.3 released
+ - -o (override frequency range checks) introduced after some l-k discussion
+
+Sun Jan 10 22:17:07 MST 1999
+ - fmtools 0.2.2 released
+ - overflows and negative values during volume changes fixed
+ - exit codes are now sane
+ - the division should now accurately reflect 100% volume
+
+Thu Jul 30 08:39:50 MDT 1998
+ - We now support fine tuning on cards that fly the VIDEO_TUNER_LOW flag.
+   Thanks to Ben Pfaff for this addition.

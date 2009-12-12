@@ -1,0 +1,130 @@
+* fmtools information
+*
+* Russell Kroll <rkroll@exploits.org>
+*
+* Program support page: http://www.exploits.org/v4l/fmtools.html
+*
+* Released under the GNU GPL - See COPYING for details.
+
+Package information
+===================
+
+This is intended to become a collection of interesting programs that 
+control the v4l radio card drivers.  Right now, this "collection" is
+merely a pair of hopefully interesting utilities:
+
+ fm      - a simple tuner
+ fmscan  - a simple band scanner
+
+fm
+==
+
+This is a very simple controller that will send commands to tuner 0 of the 
+first v4l radio card on the system.  It was written mostly so I could have
+something to send commands at the drivers being created or debugged here.
+
+I'll discuss the options a little, but it should be fairly simple to run.
+
+The usual mode of operation is to tell the radio to come on to a given
+freqency.  In these examples, 94.3 will be used since that's a station
+that happens to get tuned here frequently.
+
+To turn the radio on to that frequency at the default volume, you'd do
+"fm 94.3" and call it done.  If you wanted to crank it up to full volume, 
+another argument would be needed and the command becomes "fm 94.3 65535".
+Volumes range from 0 (off) to 65535 (full intensity).  This is a direct
+link to the value used in the v4l API by the actual drivers.
+
+There is a -q option that will suppress messages about tuning, volume
+changes, and so forth.  Keeping your tuner quiet may not seem like such
+a useful thing at first, but it can be very handy inside an IRC script.
+Having a program scribble over your channel window when you do /KILO
+or similar is not enjoyable.
+
+Besides direct tuning, there are also "on" and "off" commands.  They will
+turn the card on and off (mute) as you may have guessed.
+
+Finally, there is volume control.  To go up a notch, use +.  To go down
+a notch, use -.  Simple.
+
+fm configuration
+----------------
+
+You can create a file called .fmrc in your home directory that contains
+values for the default volume and default volume stepping.  This way,
+you can have your radio card always come on at a certain volume when you
+don't explicitly list it on the command line.  The volume stepping 
+controls how much the volume changes during a - or + operation.
+
+This file is not required for operation of the program, and it will not
+even give so much as a peep if it doesn't find it.  The defaults are
+used when you don't specify values.  The values are 12.5% for default 
+volume and 10% for default volume stepping.  
+
+Here's what a real .fmrc might look like ...
+
+VOL 32000
+INCR 6554
+
+Here we say the default volume is 32000 - just shy of 50%.  Then we
+say the increment value for volume changes with + and - is 6554 - 
+approximately 10%.  These values were obtained by playing around with
+the numbers until things behaved the way I wanted. 
+
+fmscan
+======
+
+This simple little program will command your radio card through the radio
+band and show which ones have a accumulated signal strength of 50% or 
+higher.  This process can take awhile, and can vary greatly depending on
+the radio card in use.  
+
+By default, the range scanned is 87.9-107.9 MHz in .2 MHz steps, since
+that's the standard band here in the USA.  Users in other regions should
+set the appropriate information for best results.
+
+This program didn't work at all with the radio-aimslab driver until I got
+around to adding fine tuning support.  If you have one of these cards and
+it seems to report 0% for all stations, make sure you have patched your
+driver.
+
+Also, the radio-aztech driver doesn't seem to do anything useful with
+this.  This is particularly disturbing, since that card supposedly has
+both a signal meter and a stereo detector.  The 0.50 patch to add fine
+tuning hasn't helped.
+
+v4l /dev entries
+================
+
+This program uses /dev/radio0.  If you have been using v4l radio cards
+for awhile, you may already have a /dev/radio.  That is now "legacy", and
+should be symlinked to /dev/radio0.  To create the proper device entry, 
+either do "make devices" as root, or create it by hand with mknod (c 81 64).
+
+The proper device listing looks something like this in 'ls -la' ...
+
+lrwxrwxrwx   1 root     root           11 Jan 20 03:19 /dev/radio -> /dev/radio0
+crw-r--r--   1 root     root      81,  64 Jan 20 03:19 /dev/radio0
+
+The owner and permission data should be set to values that agree with
+your system's personality.  If it's mostly a solitary system with few or
+no users, the above settings will be fine.
+
+However, if you have other people running around on your system,  consider 
+making the device part of a "radio" group or maybe even "console" if you
+use such a thing.  That will keep random individuals from doing odd things
+to your radio like changing it to a classical station while you're 
+listening to some death metal (or vice versa).  You have been warned.
+
+Old interim Linux 2.1 /dev/radio interface
+==========================================
+
+Around 2.1.60, there was another /dev/radio specification that controlled
+two boards - namely the AIMSLab RadioTrack and later the Aztech/Packard
+Bell radio card.  This didn't last very long, as the entire radio card
+driver tree was eventually redone under the expanded Video for Linux API.
+
+These programs are not compatible with that interface.  Very few things
+are.  If you are still using it, you should throw it away and upgrade to
+the V4L drivers.  There have been many improvements since then, and you
+will be able to use the fmtools programs on your card.
