@@ -1,0 +1,3 @@
+AT_INIT
+m4_include([test-fm.at])
+m4_include([test-fmscan.at])

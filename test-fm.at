@@ -1,0 +1,101 @@
+m4_define([RUN_FM], [fm -c rc -d m4_if([$1], [], test, ['test $1'])])
+
+AT_BANNER([fm])
+
+AT_SETUP(["on" command])
+AT_CHECK([RUN_FM on], [0], [Radio on at 50.00% volume
+])
+AT_CLEANUP
+
+AT_SETUP(["on" command (quiet)])
+AT_CHECK([RUN_FM -q on])
+AT_CLEANUP
+
+AT_SETUP(["off" command])
+AT_CHECK([RUN_FM off], [0], [Radio muted
+])
+AT_CLEANUP
+
+AT_SETUP(["off" command (quiet)])
+AT_CHECK([RUN_FM -q off])
+AT_CLEANUP
+
+AT_SETUP(["+" command, in-range])
+AT_CHECK([RUN_FM +], [0], [Setting volume to 60.00%
+])
+AT_CLEANUP
+
+AT_SETUP(["+" command, in-range (quiet)])
+AT_CHECK([RUN_FM -q +])
+AT_CLEANUP
+
+AT_SETUP(["+" command, in-range, customized increment])
+AT_DATA([rc], [INCR 25
+])
+AT_CHECK([RUN_FM +], [0], [Setting volume to 75.00%
+])
+AT_CLEANUP
+
+AT_SETUP(["+" command, clamp to 100%])
+AT_CHECK([RUN_FM([99]) +], [0], [Setting volume to 100.00%
+])
+AT_CLEANUP
+
+AT_SETUP(["-" command, in-range])
+AT_CHECK([RUN_FM -], [0], [Setting volume to 40.00%
+])
+AT_CLEANUP
+
+AT_SETUP(["-" command, in-range (quiet)])
+AT_CHECK([RUN_FM -q -])
+AT_CLEANUP
+
+AT_SETUP(["-" command, in-range, customized increment])
+AT_DATA([rc], [INCR 15
+])
+AT_CHECK([RUN_FM -], [0], [Setting volume to 35.00%
+])
+AT_CLEANUP
+
+AT_SETUP(["-" command, clamp to 0%])
+AT_CHECK([RUN_FM([5]) -], [0], [Setting volume to 0.00%
+])
+AT_CLEANUP
+
+AT_SETUP([tune valid freq, default volume])
+AT_CHECK([RUN_FM 90], [0], [Radio tuned to 90.00 MHz at 12.50% volume
+])
+AT_CLEANUP
+
+AT_SETUP([tune valid freq, default volume (quiet) ])
+AT_CHECK([RUN_FM -q 90])
+AT_CLEANUP
+
+AT_SETUP([tune valid freq, customized default volume])
+AT_DATA([rc], [VOL 80
+])
+AT_CHECK([RUN_FM 90], [0], [Radio tuned to 90.00 MHz at 80.00% volume
+])
+AT_CLEANUP
+
+AT_SETUP([tune and wait 1 second])
+AT_CHECK([RUN_FM -T 1s 90], [0], [Radio tuned to 90.00 MHz at 12.50% volume
+Sleeping for 1 second(s)
+])
+AT_CLEANUP
+
+AT_SETUP([tune valid freq, specific volume])
+AT_CHECK([RUN_FM 90 55], [0], [Radio tuned to 90.00 MHz at 55.00% volume
+])
+AT_CLEANUP
+
+AT_SETUP([tune invalid freq])
+AT_CHECK([RUN_FM 80], [1], [], 
+  [fm: Frequency 80.0 MHz out of range (89.0 - 91.0 MHz)
+])
+AT_CLEANUP
+
+AT_SETUP([override tune invalid freq])
+AT_CHECK([RUN_FM -o 80], [0], [Radio tuned to 80.00 MHz at 12.50% volume
+])
+AT_CLEANUP

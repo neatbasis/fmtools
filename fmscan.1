@@ -2,13 +2,16 @@
 .SH NAME
 fmscan \- scan FM band for radio stations
 .SH SYNOPSIS
-.HP
+.PP
 .B fm
 [
 .B \-h
 ] [
 .B \-d
 .I device
+] [
+.B \-t
+.I tuner
 ] [
 .B \-s
 .I freq
@@ -18,6 +21,8 @@ fmscan \- scan FM band for radio stations
 ] [
 .I \-i
 .I freq
+] [
+.I \-q
 ]
 .SH DESCRIPTION
 .B fmscan
@@ -34,6 +39,10 @@ Print a usage message to standard output, and exit.
 Sets \fIdevice\fR as the device to tune.  The default is
 \fB/dev/radio0\fR.
 .TP
+\fB\-t \fItuner
+Sets \fItuner\fR as the tuner on the selected device to adjust.  The
+default is tuner 0.  Most radio devices have only a single tuner.
+.TP
 \fB\-s \fIfreq
 Starting frequency for scan, in MHz.  Default: 87.9.
 .TP
@@ -45,15 +54,17 @@ Increment between scanned channels, in MHz.  Default: 0.2.
 .TP
 \fB\-t \fIpercent
 Signal strength threshold to consider a channel.  Default: 50%.
+.TP
+\fB\-q\fR
+Quiet mode.  Suppresses progress output.
 .SH BUGS
 This process can take a while, and results vary greatly depending on the
 radio card in use.  If your card's hardware cannot report signal
 strength, it will not produce useful results.
 .PP
 This program may not do much if your radio card's driver doesn't support
-fine tuning in 1/16000 MHz offsets.  By default, v4l assumes 1/16 MHz
+fine tuning in 1/16000 MHz offsets.  By default, V4L2 assumes 1/16 MHz
 tuning units, which introduces evil rounding errors on many frequencies.
-If in doubt, grep for VIDEO_TUNER_LOW in your driver's source.
 .PP
 Supports only tuner 0 on any given device.
 .SH SEE ALSO
@@ -62,10 +73,7 @@ Additional documentation:
 .B /usr/doc/fmtools/README
 .TP
 The fmtools homepage:
-.B http://www.exploits.org/v4l/fmtools.html
-.TP
-The video4linux webpage:
-.B http://roadrunner.swansea.uk.linux.org/v4l.shtml
+.B http://benpfaff.org/fmtools
 .SH AUTHORS
 Russell Kroll <rkroll@exploits.org>, now maintained by Ben Pfaff
 <blp@cs.stanford.edu.>. This manpage written by Ben Pfaff.

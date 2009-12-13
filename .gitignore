@@ -1,0 +1,17 @@
+/.deps
+/Makefile
+/Makefile.in
+/aclocal.m4
+/atconfig
+/atlocal
+/autom4te.cache
+/build-aux
+/config.log
+/config.status
+/configure
+/fm
+/fmscan
+/package.m4
+/testsuite
+/testsuite.log
+/fmtools-*.tar.gz

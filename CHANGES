@@ -1,3 +1,21 @@
+2.0:
+
+Sat Dec 12 21:18:52 PST 2009 / Ben Pfaff <blp@cs.stanford.edu>
+
+- Rewrite to use video4linux2 API.
+
+- Add "-q" (quiet) and "-T" (tuner) options to fmscan.
+
+- Improve fmscan frequency calculations.  It should now be better at
+  accurately finding radio stations.
+
+- Add Autotest test suite and, in the process, convert the packaging
+  to use Autoconf and Automake.
+
+- Some code and some documentation used a range of 0-65535 for volume,
+  other code and other documentation used a range of 0-100.  This has
+  been consistently changed to 0-100.
+
 1.0.2:
 
 Thu Nov 23 1:41:00 PDT 2006 / Ben Pfaff <blp@cs.stanford.edu>

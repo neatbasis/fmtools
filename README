@@ -1,18 +1,35 @@
-* fmtools: simple Video for Linux radio card programs
-*
-* Russell Kroll <rkroll@exploits.org>
-*
-* Program support page: http://www.exploits.org/v4l/fmtools.html
-*
-* Released under the GNU GPL - See COPYING for details.
+fmtools: simple V4L2 radio card programs
+
+Maintained by Ben Pfaff <blp@cs.stanford.edu>
+Originally by Russell Kroll <rkroll@exploits.org>
+
+Web: http://benpfaff.org/fmtools
+Git: git://repo.or.cz/fmtools.git
+
+License
+=======
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Package information
 ===================
 
-This is a pair of hopefully useful control programs for Video for Linux
-(v4l) radio card drivers.  The focus is on control, so you may find these
-programs a bit unfriendly.  Users are encouraged to investigate the source
-and create wrappers or new programs based on this design.
+This is a pair of hopefully useful control programs for Video for
+Linux 2 (V4L2) radio card drivers.  The focus is on control, so you
+may find these programs a bit unfriendly.  Users are encouraged to
+investigate the source and create wrappers or new programs based on
+this design.
 
  fm      - a simple tuner
  fmscan  - a simple band scanner
@@ -20,109 +37,102 @@ and create wrappers or new programs based on this design.
 fm
 ==
 
-This is a small controller that will send commands to your v4l radio
-cards.  It was written mostly so I could have something to send commands
-at the drivers being created or debugged here.
-
-I'll discuss the options a little, but it should be fairly simple to run.
+This is a simple program that will send commands to your V4L2 radio
+cards.  It was written mostly so I could have something to send
+commands at the drivers being created or debugged here.
 
 The usual mode of operation is to tell the radio to come on to a given
 freqency.  In these examples, 94.3 will be used since that's a station
 that happens to get tuned here frequently.
 
 To turn the radio on to that frequency at the default volume, you'd do
-"fm 94.3" and call it done.  If you wanted to crank it up to full volume, 
-another argument would be needed and the command becomes "fm 94.3 65535".
-Volumes range from 0 (off) to 65535 (full intensity).  This is a direct
-link to the value used in the v4l API by the actual drivers.
+"fm 94.3" and call it done.  If you wanted to crank it up to full
+volume, another argument would be needed and the command becomes "fm
+94.3 100".  Volumes range from 0 (off) to 100 (full intensity).
 
 There is a -q option that will suppress messages about tuning, volume
-changes, and so forth.  Keeping your tuner quiet may not seem like such
-a useful thing at first, but it can be very handy inside an IRC script.
-Having a program scribble on your channel window when you do /KILO
-or similar is not enjoyable.
+changes, and so forth.  Keeping your tuner quiet may not seem like
+such a useful thing at first, but it can be very handy inside an IRC
+script.  Having a program scribble on your channel window when you do
+/KILO or similar is not enjoyable.
 
-Besides direct tuning, there are also "on" and "off" commands.  They will
-turn the card on and off (mute) as you may have guessed.
+Besides direct tuning, there are also "on" and "off" commands.  They
+will turn the card on and off (mute) as you may have guessed.
 
-Finally, there is volume control.  To go up a notch, use +.  To go down
-a notch, use -.  Simple.
+Finally, there is volume control.  To go up a notch, use +.  To go
+down a notch, use -.  Simple.
 
 fm configuration
 ----------------
 
-You can create a file called .fmrc in your home directory that contains
-values for the default volume and default volume stepping.  This way,
-you can have your radio card always come on at a certain volume when you
-don't explicitly list it on the command line.  The volume stepping 
-controls how much the volume changes during a - or + operation.
+You can create a file called .fmrc in your home directory that
+contains values for the default volume and default volume stepping.
+This way, you can have your radio card always come on at a certain
+volume when you don't explicitly list it on the command line.  The
+volume stepping controls how much the volume changes during a - or +
+operation.
 
-This file is not required for operation of the program, and it will not
-even give so much as a peep if it doesn't find it.  The defaults are
-used when you don't specify values.  The values are 12.5% for default 
-volume and 10% for default volume stepping.  
+This file is not required for operation of the program, and it will
+not even give so much as a peep if it doesn't find it.  The defaults
+are used when you don't specify values.  The values are 12.5% for
+default volume and 10% for default volume stepping.
 
 Here's what a real .fmrc might look like ...
 
-VOL 32000
-INCR 6554
+VOL 50
+INCR 10
 
-Here we say the default volume is 32000 - just shy of 50%.  Then we
-say the increment value for volume changes with + and - is 6554 - 
-approximately 10%.  These values were obtained by playing around with
-the numbers until things behaved the way I wanted.   Be aware that some
-cards only have a couple of volume steps, so you may not notice a change
-right away.
+Here we say the default volume is 50%.  Then we say the increment
+value for volume changes with + and - is 10%.  These values were
+obtained by playing around with the numbers until things behaved the
+way I wanted.  Be aware that some cards only have a couple of volume
+steps, so you may not notice a change right away.
 
-The Cadet hardware, for example, has two settings: off and *VERY LOUD*.
-Any volume setting will turn it on.  The Aztech card has 4 settings (off,
-low, medium, high) and you'll notice it change when you cross the
-boundaries.  The Aimslab RadioReveal card is actually based on analog
-volume control, with 10 steps emulated within that range.
+The Cadet hardware, for example, has two settings: off and *VERY
+LOUD*.  Any volume setting will turn it on.  The Aztech card has 4
+settings (off, low, medium, high) and you'll notice it change when you
+cross the boundaries.  The Aimslab RadioReveal card is actually based
+on analog volume control, with 10 steps emulated within that range.
 
 There are some other options available:
 
--d - select device.  If you have more than one v4l radio card in your
-     system for some reason, use -d <device> to select the right one. 
-     This is probably only useful if you like writing drivers for these
-     things.
+-d - select device.  If you have more than one V4L2 radio card in your
+     system for some reason, use -d <device> to select the right one.
+     This is probably only useful if you like writing drivers for
+     these things.
 
 -o - override card frequency range - Some radio card drivers don't
      actively enforce the frequencies that you can tune to.  Use this
-     switch and fm will send any frequency you want to the driver.  This
-     alone will not make an unmodified card receive frequencies from
-     outside the design range.  You have to change the tuner hardware in
-     order to enjoy such broadcasts.
+     switch and fm will send any frequency you want to the driver.
+     This alone will not make an unmodified card receive frequencies
+     from outside the design range.  You have to change the tuner
+     hardware in order to enjoy such broadcasts.
 
--t - select tuner - Certain cards have multiple tuners - usually used for
-     different bands.  The ADS Cadet driver is known to support this,
-     specifically using 0 for FM and 1 for AM.  To tune AM frequencies,
-     remember that fm expects MHz style input, and do the following:
+-t - select tuner - Certain cards have multiple tuners - usually used
+     for different bands.  The ADS Cadet driver is known to support
+     this, specifically using 0 for FM and 1 for AM.  To tune AM
+     frequencies, remember that fm expects MHz style input, and do the
+     following:
 
      For 1200 kHz, enter 'fm -t 1 1.2', since 1.2 MHz == 1200 kHz.
 
      Yes, tuning am frequencies with 'fm' seems backwards, but that's
-     life.  Crafty hackers may want to add some code to make the program
-     check argv[0] and behave differently.
+     life.  Crafty hackers may want to add some code to make the
+     program check argv[0] and behave differently.
 
 fmscan
 ======
 
-This simple little program will command your radio card through the radio
-band and show which ones have a accumulated signal strength of 50% or 
-higher.  This process can take awhile, and can vary greatly depending on
-the radio card in use.  
+This simple little program will command your radio card through the
+radio band and show which ones have a accumulated signal strength of
+50% or higher.  This process can take awhile, and can vary greatly
+depending on the radio card in use.
 
 By default, the range scanned is 87.9-107.9 MHz in .2 MHz steps, since
-that's the standard band here in the USA.  Users in other regions should
-set the appropriate information for best results.
+that's the standard band here in the USA.  Users in other regions
+should set the appropriate information for best results.
 
-This program may not do much if your radio card's driver doesn't support
-fine tuning in 1/16000 MHz offsets.  By default, v4l assumes 1/16 MHz
-tuning units, which introduces evil rounding errors on many frequencies.
-If in doubt, grep for VIDEO_TUNER_LOW in your driver's source.
-
-v4l /dev entries
+V4L2 /dev entries
 ================
 
 By default, these programs use /dev/radio0 to access the hardware.  This
@@ -148,16 +158,3 @@ making the device part of a "radio" group or maybe even "console" if you
 use such a thing.  That will keep random individuals from doing odd things
 to your radio like changing it to a classical station while you're 
 listening to some death metal (or vice versa).  You have been warned.
-
-Old interim Linux 2.1 /dev/radio interface
-==========================================
-
-Around 2.1.60, there was another /dev/radio specification that controlled
-two boards - namely the AIMSLab RadioTrack and later the Aztech/Packard
-Bell radio card.  This didn't last very long, as the entire radio card
-driver tree was eventually redone under the expanded Video for Linux API.
-
-These programs are not compatible with that interface.  Very few things
-are.  If you are still using it, you should throw it away and upgrade to
-the v4l drivers.  There have been many improvements since then, and you
-will be able to use the fmtools programs on your card.
