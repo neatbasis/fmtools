@@ -70,6 +70,8 @@ xmalloc(size_t n)
 void
 tuner_open(struct tuner *tuner, const char *device, int index)
 {
+        memset(tuner, 0, sizeof *tuner);
+
         if (!device)
                 device = "/dev/radio0";
         else if (!strcmp(device, "test") || !strncmp(device, "test ", 5)) {
