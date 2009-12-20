@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 		totsig = 0;
 		for (i = 0; i < tries; i++) {
                         totsig += tuner_get_signal(&tuner);
-			perc = totsig / (65535.0 * i);
+			perc = totsig / (65535.0 * (i + 1));
                         if (!quiet) {
                                 printf("%2.1f: checking: %3.1f%% (%d/%d)"
                                        "    \r",
