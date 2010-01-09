@@ -1,3 +1,14 @@
+fmtools (2.0.1) unstable; urgency=low
+
+  * New upstream release.  The new release uses Automake, so a "configure"
+    command had to be added to "rules".
+  
+  * Update to Debhelper 7.
+  
+  * Update to newer Debian policy version.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sat, 09 Jan 2010 13:30:15 -0800
+
 fmtools (1.0.2) unstable; urgency=low
 
   * New upstream release.

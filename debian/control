@@ -2,12 +2,12 @@ Source: fmtools
 Section: sound
 Priority: extra
 Maintainer: Ben Pfaff <pfaffben@debian.org>
-Standards-Version: 3.7.2
-Build-Depends: debhelper (>= 5.0)
+Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 7.0)
 
 Package: fmtools
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: FM radio tuner
  Command-line utility for adjusting the frequency and volume and
  muting and unmuting FM radio cards.
