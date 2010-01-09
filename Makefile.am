@@ -1,12 +1,16 @@
 AM_CFLAGS = -Wall -Wstrict-prototypes -Wmissing-prototypes
 
 bin_PROGRAMS = fm fmscan
-
 fm_SOURCES = fm.c fmlib.c fmlib.h
-fm_LDADD = -lm
-
 fmscan_SOURCES = fmscan.c fmlib.c fmlib.h
-fmscan_LDADD = -lm
+dist_man_MANS = fm.1 fmscan.1
+
+EXTRA_DIST = \
+	debian/changelog \
+	debian/compat \
+	debian/control \
+	debian/copyright \
+	debian/rules
 
 #### The rest of this file is just for the testsuite.  It is just
 #### boilerplate from the Autoconf manual describing how to use
@@ -30,7 +34,7 @@ $(srcdir)/package.m4: $(top_srcdir)/configure.ac
 	  echo '  [@PACKAGE_URL@])'; \
 	} >'$(srcdir)/package.m4'
 
-EXTRA_DIST = testsuite.at $(srcdir)/package.m4 $(TESTSUITE) atlocal.in
+EXTRA_DIST += testsuite.at $(srcdir)/package.m4 $(TESTSUITE) atlocal.in
 DISTCLEANFILES = atconfig
 TESTSUITE = $(srcdir)/testsuite
 TESTSUITE_AT = \
