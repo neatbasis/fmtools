@@ -208,9 +208,16 @@ static void
 print_volume(const struct tuner *tuner)
 {
         if (tuner_has_volume_control(tuner))
-                printf(" at %.2f%% volume\n", tuner_get_volume(tuner));
+                printf(" at %.2f%% volume", tuner_get_volume(tuner));
         else
-                printf(" (radio does not support volume control)\n");
+                printf(" (radio does not support volume control)");
+}
+
+static void
+print_mute(const struct tuner *tuner)
+{
+        if (tuner_is_muted(tuner))
+                printf(" (radio is muted, use \"fm on\" to unmute)");
 }
 
 int main(int argc, char **argv)
@@ -286,6 +293,7 @@ int main(int argc, char **argv)
                 if (!quiet) {
                         printf("Radio on");
                         print_volume(&tuner);
+                        putchar('\n');
                 }
         } else if (!strcmp(argv[0], "+") || !strcmp(argv[0], "-")) {
                 double new_volume;
@@ -299,10 +307,13 @@ int main(int argc, char **argv)
                         new_volume -= increment;
                 new_volume = clamp(new_volume);
 
-                if (!quiet)
-                        printf("Setting volume to %.2f%%\n", new_volume);
-
                 tuner_set_volume(&tuner, new_volume);
+
+                if (!quiet) {
+                        printf("Setting volume to %.2f%%", new_volume);
+                        print_mute(&tuner);
+                        putchar('\n');
+                }
         } else if (atof(argv[0])) {
                 double frequency = atof(argv[0]);
                 double volume = argc > 1 ? clamp(atof(argv[1])) : defaultvol;
@@ -311,6 +322,8 @@ int main(int argc, char **argv)
                 if (!quiet) {
                         printf("Radio tuned to %2.2f MHz", frequency);
                         print_volume(&tuner);
+                        print_mute(&tuner);
+                        putchar('\n');
                 }
         } else {
                 fatal(0, "unrecognized command syntax; use --help for help");

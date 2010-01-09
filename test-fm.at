@@ -35,6 +35,12 @@ AT_CHECK([RUN_FM +], [0], [Setting volume to 60.00%
 ])
 AT_CLEANUP
 
+AT_SETUP(["+" command, in-range (muted)])
+AT_CHECK([RUN_FM([50 1]) +], [0], 
+  [Setting volume to 60.00% (radio is muted, use "fm on" to unmute)
+])
+AT_CLEANUP
+
 AT_SETUP(["+" command, in-range (quiet)])
 AT_CHECK([RUN_FM -q +])
 AT_CLEANUP
@@ -82,9 +88,14 @@ AT_CHECK([RUN_FM 90], [0], [Radio tuned to 90.00 MHz at 12.50% volume
 ])
 AT_CLEANUP
 
-AT_SETUP([tune valid freq, no volume control])
-AT_CHECK([RUN_FM([-1]) 90], [0], 
-  [Radio tuned to 90.00 MHz (radio does not support volume control)
+AT_SETUP([tune valid freq, default volume])
+AT_CHECK([RUN_FM 90], [0], [Radio tuned to 90.00 MHz at 12.50% volume
+])
+AT_CLEANUP
+
+AT_SETUP([tune valid freq, muted])
+AT_CHECK([RUN_FM([50 1]) 90], [0], 
+  [Radio tuned to 90.00 MHz at 12.50% volume (radio is muted, use "fm on" to unmute)
 ])
 AT_CLEANUP
 

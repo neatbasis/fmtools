@@ -30,6 +30,7 @@
 struct tuner_test {
         int freq;               /* In 1/16 MHz. */
         int volume;             /* Between 1000 and 2000. */
+        bool mute;              /* Muted? */
 };
 
 char *program_name;
@@ -76,13 +77,19 @@ tuner_open(struct tuner *tuner, const char *device, int index)
                 device = "/dev/radio0";
         else if (!strcmp(device, "test") || !strncmp(device, "test ", 5)) {
                 double volume;
+                int mute;
+                int n;
 
-                if (sscanf(device, "test %lf", &volume) != 1)
+                n = sscanf(device, "test %lf %d", &volume, &mute);
+                if (n < 1)
                         volume = 50;
+                if (n < 2)
+                        mute = 0;
 
                 tuner->test = xmalloc(sizeof *tuner->test);
                 tuner->test->freq = 90 * 16;
                 tuner->test->volume = volume >= 0 ? volume * 10 + 1000.5 : 0;
+                tuner->test->mute = mute != 0;
 
                 device = "/dev/null";
         }
@@ -100,6 +107,12 @@ void
 tuner_close(struct tuner *tuner)
 {
         close(tuner->fd);
+}
+
+bool
+tuner_is_muted(const struct tuner *tuner)
+{
+        return get_control(tuner, V4L2_CID_AUDIO_MUTE);
 }
 
 void
@@ -235,8 +248,12 @@ get_control(const struct tuner *tuner, uint32_t id)
         memset(&control, 0, sizeof control);
         control.id = id;
         if (tuner->test) {
-                assert(id == V4L2_CID_AUDIO_VOLUME);
-                control.value = tuner->test->volume;
+                if (id == V4L2_CID_AUDIO_VOLUME)
+                        control.value = tuner->test->volume;
+                else if (id == V4L2_CID_AUDIO_MUTE)
+                        control.value = tuner->test->mute;
+                else
+                        abort();
         } else if (ioctl(tuner->fd, VIDIOC_G_CTRL, &control) == -1)
                 fatal(errno, "VIDIOC_G_CTRL");
         return control.value;
@@ -251,9 +268,10 @@ set_control(const struct tuner *tuner, uint32_t id, int32_t value)
         control.id = id;
         control.value = value;
         if (tuner->test) {
-                if (id == V4L2_CID_AUDIO_MUTE)
+                if (id == V4L2_CID_AUDIO_MUTE) {
                         assert(value == 0 || value == 1);
-                else if (id == V4L2_CID_AUDIO_VOLUME) {
+                        tuner->test->mute = value;
+                } else if (id == V4L2_CID_AUDIO_VOLUME) {
                         assert(value >= 1000 && value <= 2000);
                         tuner->test->volume = value;
                 } else {

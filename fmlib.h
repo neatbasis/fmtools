@@ -39,6 +39,7 @@ void fatal(int error, const char *msg, ...)
 void tuner_open(struct tuner *, const char *device, int index);
 void tuner_close(struct tuner *);
 
+bool tuner_is_muted(const struct tuner *);
 void tuner_set_mute(struct tuner *, bool mute);
 
 bool tuner_has_volume_control(const struct tuner *);
