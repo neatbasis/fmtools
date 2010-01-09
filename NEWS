@@ -1,3 +1,16 @@
+2.0.1:
+
+Sat Jan 9 13:28:53 PST 2010 / Ben Pfaff <blp@cs.stanford.edu>
+
+- Fix bugs that prevented fm and fmscan from working outside "test"
+  mode (used by the testsuite.
+
+- Better support radios that do not have volume control.
+
+- Make fm report when the radio is muted and tell the user how to unmute it.
+
+- Packaging improvements.
+
 2.0:
 
 Sat Dec 12 21:18:52 PST 2009 / Ben Pfaff <blp@cs.stanford.edu>
