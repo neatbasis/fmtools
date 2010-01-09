@@ -82,7 +82,7 @@ tuner_open(struct tuner *tuner, const char *device, int index)
 
                 tuner->test = xmalloc(sizeof *tuner->test);
                 tuner->test->freq = 90 * 16;
-                tuner->test->volume = volume * 10 + 1000.5;
+                tuner->test->volume = volume >= 0 ? volume * 10 + 1000.5 : 0;
 
                 device = "/dev/null";
         }
@@ -108,21 +108,36 @@ tuner_set_mute(struct tuner *tuner, bool mute)
         set_control(tuner, V4L2_CID_AUDIO_MUTE, mute);
 }
 
+bool
+tuner_has_volume_control(const struct tuner *tuner)
+{
+        const struct v4l2_queryctrl *vqc = &tuner->volume_ctrl;
+        return vqc->maximum > vqc->minimum;
+}
+
 double
 tuner_get_volume(const struct tuner *tuner)
 {
-        const struct v4l2_queryctrl *vqc = &tuner->volume_ctrl;
-        int volume = get_control(tuner, V4L2_CID_AUDIO_VOLUME);
-        return 100.0 * (volume - vqc->minimum) / (vqc->maximum - vqc->minimum);
+        if (tuner_has_volume_control(tuner)) {
+                const struct v4l2_queryctrl *vqc = &tuner->volume_ctrl;
+                int volume = get_control(tuner, V4L2_CID_AUDIO_VOLUME);
+                return (100.0
+                        * (volume - vqc->minimum)
+                        / (vqc->maximum - vqc->minimum));
+        } else {
+                return 100.0;
+        }
 }
 
 void
 tuner_set_volume(struct tuner *tuner, double volume)
 {
-        struct v4l2_queryctrl *vqc = &tuner->volume_ctrl;
-        set_control(tuner, V4L2_CID_AUDIO_VOLUME,
-                    (volume / 100.0 * (vqc->maximum - vqc->minimum)
-                     + vqc->minimum));
+        if (tuner_has_volume_control(tuner)) {
+                struct v4l2_queryctrl *vqc = &tuner->volume_ctrl;
+                set_control(tuner, V4L2_CID_AUDIO_VOLUME,
+                            (volume / 100.0 * (vqc->maximum - vqc->minimum)
+                             + vqc->minimum));
+        }
 }
 
 long long int
@@ -204,8 +219,10 @@ query_control(const struct tuner *tuner, uint32_t id,
         qc->id = id;
         if (tuner->test) {
                 assert(id == V4L2_CID_AUDIO_VOLUME);
-                qc->minimum = 1000;
-                qc->maximum = 2000;
+                if (tuner->test->volume) {
+                        qc->minimum = 1000;
+                        qc->maximum = 2000;
+                }
         } else if (ioctl(tuner->fd, VIDIOC_QUERYCTRL, qc) == -1)
                 fatal(errno, "VIDIOC_QUERYCTRL");
 }

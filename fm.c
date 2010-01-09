@@ -202,7 +202,16 @@ getconfig(const char *fn,
 	}
 
 	fclose(conf);
-}	
+}
+
+static void
+print_volume(const struct tuner *tuner)
+{
+        if (tuner_has_volume_control(tuner))
+                printf(" at %.2f%% volume\n", tuner_get_volume(tuner));
+        else
+                printf(" (radio does not support volume control)\n");
+}
 
 int main(int argc, char **argv)
 {
@@ -274,11 +283,16 @@ int main(int argc, char **argv)
                         printf("Radio muted\n");
         } else if (!strcmp(argv[0], "on")) {
                 tuner_set_mute(&tuner, false);
-                if (!quiet)
-                        printf("Radio on at %.2f%% volume\n",
-                               tuner_get_volume(&tuner));
+                if (!quiet) {
+                        printf("Radio on");
+                        print_volume(&tuner);
+                }
         } else if (!strcmp(argv[0], "+") || !strcmp(argv[0], "-")) {
-                double new_volume = tuner_get_volume(&tuner);
+                double new_volume;
+                if (!tuner_has_volume_control(&tuner))
+                        fatal(0, "Radio does not support volume control");
+
+                new_volume = tuner_get_volume(&tuner);
                 if (argv[0][0] == '+')
                         new_volume += increment;
                 else
@@ -286,8 +300,7 @@ int main(int argc, char **argv)
                 new_volume = clamp(new_volume);
 
                 if (!quiet)
-                        printf("Setting volume to %.2f%%\n",
-                               new_volume);
+                        printf("Setting volume to %.2f%%\n", new_volume);
 
                 tuner_set_volume(&tuner, new_volume);
         } else if (atof(argv[0])) {
@@ -295,9 +308,10 @@ int main(int argc, char **argv)
                 double volume = argc > 1 ? clamp(atof(argv[1])) : defaultvol;
                 tuner_set_freq(&tuner, frequency * 16000.0, override);
                 tuner_set_volume(&tuner, volume);
-                if (!quiet)
-                        printf("Radio tuned to %2.2f MHz at %.2f%% volume\n",
-                               frequency, volume);
+                if (!quiet) {
+                        printf("Radio tuned to %2.2f MHz", frequency);
+                        print_volume(&tuner);
+                }
         } else {
                 fatal(0, "unrecognized command syntax; use --help for help");
         }

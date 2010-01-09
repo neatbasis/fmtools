@@ -41,6 +41,7 @@ void tuner_close(struct tuner *);
 
 void tuner_set_mute(struct tuner *, bool mute);
 
+bool tuner_has_volume_control(const struct tuner *);
 double tuner_get_volume(const struct tuner *);
 void tuner_set_volume(struct tuner *, double volume);
 
