@@ -1,4 +1,4 @@
-AC_INIT([fmtools], [2.0.1], [blp@cs.stanford.edu])
+AC_INIT([fmtools], [2.0.2], [blp@cs.stanford.edu])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREREQ([2.59])

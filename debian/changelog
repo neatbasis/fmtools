@@ -1,3 +1,10 @@
+fmtools (2.0.2) unstable; urgency=low
+
+  * debian/control: Limit Architecture: to Linux, since this is a
+    Linux-specific package.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sat, 27 Mar 2010 10:51:43 -0700
+
 fmtools (2.0.1) unstable; urgency=low
 
   * New upstream release.  The new release uses Automake, so a "configure"
