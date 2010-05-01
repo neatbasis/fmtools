@@ -6,7 +6,7 @@ Standards-Version: 3.8.3
 Build-Depends: debhelper (>= 7.0)
 
 Package: fmtools
-Architecture: i386 ia64 alpha amd64 armeb arm hppa m32r m68k mips mipsel powerpc ppc64 s390 s390x sh3 sh3eb sh4 sh4eb sparc
+Architecture: i386 ia64 alpha amd64 armeb armel arm hppa m32r m68k mips mipsel powerpc ppc64 s390 s390x sh3 sh3eb sh4 sh4eb sparc
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: FM radio tuner
  Command-line utility for adjusting the frequency and volume and

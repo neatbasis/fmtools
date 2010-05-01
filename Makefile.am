@@ -10,7 +10,8 @@ EXTRA_DIST = \
 	debian/compat \
 	debian/control \
 	debian/copyright \
-	debian/rules
+	debian/rules \
+	debian/source/format
 
 #### The rest of this file is just for the testsuite.  It is just
 #### boilerplate from the Autoconf manual describing how to use

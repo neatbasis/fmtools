@@ -1,3 +1,12 @@
+fmtools (2.0.3) unstable; urgency=low
+
+  * debian/control: Add armel to Architectures, since Debian buildds use
+    that architecture even though Debian policy does not mention it.
+  
+  * debian/source/format: Add and initialize to 1.0.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Sat, 01 May 2010 11:52:24 -0700
+
 fmtools (2.0.2) unstable; urgency=low
 
   * debian/control: Limit Architecture: to Linux, since this is a
