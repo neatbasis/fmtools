@@ -1,3 +1,11 @@
+fmtools (2.0.4) unstable; urgency=low
+
+  * debian/control: Use "linux-any" wildcard for architecture, instead of
+    listing all the GNU/Linux architectures by hand as before.  Closes:
+    #604683.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Tue, 23 Nov 2010 09:39:14 -0800
+
 fmtools (2.0.3) unstable; urgency=low
 
   * debian/control: Add armel to Architectures, since Debian buildds use
