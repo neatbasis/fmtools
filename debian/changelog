@@ -1,8 +1,17 @@
+fmtools (2.0.5) unstable; urgency=low
+
+  * Build fmtools properly from "make dist" generated tarball.  Closes:
+    #604766.  Thanks to Sebastian Andrzej Siewior
+    <sebastian@breakpoint.cc> for reporting the problem.
+
+ -- Ben Pfaff <pfaffben@debian.org>  Wed, 24 Nov 2010 05:27:04 -0800
+
 fmtools (2.0.4) unstable; urgency=low
 
   * debian/control: Use "linux-any" wildcard for architecture, instead of
     listing all the GNU/Linux architectures by hand as before.  Closes:
-    #604683.
+    #604683.  Thanks to Konstantinos Margaritis <markos@genesi-usa.com>
+    for reporting the problem.
 
  -- Ben Pfaff <pfaffben@debian.org>  Tue, 23 Nov 2010 09:39:14 -0800
 
