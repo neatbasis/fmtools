@@ -1,6 +1,6 @@
 /* fm.c - simple V4L2 compatible tuner for radio cards
 
-   Copyright (C) 2004, 2006, 2009 Ben Pfaff <blp@cs.stanford.edu>
+   Copyright (C) 2004, 2006, 2009, 2012 Ben Pfaff <blp@cs.stanford.edu>
    Copyright (C) 1998 Russell Kroll <rkroll@exploits.org>
 
    This program is free software; you can redistribute it and/or modify it
@@ -318,7 +318,8 @@ int main(int argc, char **argv)
                 double frequency = atof(argv[0]);
                 double volume = argc > 1 ? clamp(atof(argv[1])) : defaultvol;
                 tuner_set_freq(&tuner, frequency * 16000.0, override);
-                tuner_set_volume(&tuner, volume);
+                if (tuner_has_volume_control(&tuner))
+                        tuner_set_volume(&tuner, volume);
                 if (!quiet) {
                         printf("Radio tuned to %2.2f MHz", frequency);
                         print_volume(&tuner);

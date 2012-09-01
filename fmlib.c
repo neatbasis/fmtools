@@ -1,6 +1,6 @@
 /* fmlib.c - simple V4L2 compatible tuner for radio cards
 
-   Copyright (C) 2009 Ben Pfaff <blp@cs.stanford.edu>
+   Copyright (C) 2009, 2012 Ben Pfaff <blp@cs.stanford.edu>
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -224,6 +224,9 @@ tuner_sleep(const struct tuner *tuner, int secs)
                 sleep(secs);
 }
 
+/* Queries 'tuner' for a property with the given 'id' and fills in 'qc' with
+ * the result.  If 'tuner' doesn't have such a property, clears 'qc' to
+ * all-zeros. */
 static void
 query_control(const struct tuner *tuner, uint32_t id,
               struct v4l2_queryctrl *qc)
@@ -236,8 +239,14 @@ query_control(const struct tuner *tuner, uint32_t id,
                         qc->minimum = 1000;
                         qc->maximum = 2000;
                 }
-        } else if (ioctl(tuner->fd, VIDIOC_QUERYCTRL, qc) == -1)
+        } else if (ioctl(tuner->fd, VIDIOC_QUERYCTRL, qc) != -1) {
+                /* Success. */
+        } else if (errno == ENOTTY) {
+                /* This tuner doesn't support 'id'. */
+                memset(qc, 0, sizeof *qc);
+        } else {
                 fatal(errno, "VIDIOC_QUERYCTRL");
+        }
 }
 
 static int32_t
