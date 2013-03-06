@@ -3,43 +3,45 @@ m4_define([RUN_FMSCAN], [fmscan -q -d m4_if([$1], [], test, ['test $1'])])
 AT_BANNER([fmscan])
 
 AT_SETUP([defaults])
-AT_CHECK([RUN_FMSCAN], [0], [Setting start to tuner minimum 89.0 MHz
-Setting end to tuner maximum 91.0 MHz
-Scanning range: 89.0 - 91.0 MHz (0.2 MHz increments)...
-89.6: 97.7%
-90.4: 76.3%
+AT_CHECK([RUN_FMSCAN], [0], [Setting start to tuner minimum 89.00 MHz
+Setting end to tuner maximum 91.00 MHz
+Scanning range: 89.00 - 91.00 MHz (0.20 MHz increments)...
+89.60: 97.7%
+90.40: 76.3%
 ])
 AT_CLEANUP
 
 AT_SETUP([specified range])
 AT_CHECK([RUN_FMSCAN -s 89.2 -e 90], [0], 
-[Scanning range: 89.2 - 90.0 MHz (0.2 MHz increments)...
-89.6: 97.7%
+[Scanning range: 89.20 - 90.00 MHz (0.20 MHz increments)...
+89.60: 97.7%
 ])
 AT_CLEANUP
 
 AT_SETUP([specified increment])
-AT_CHECK([RUN_FMSCAN -i 0.1], [0], 
-[Setting start to tuner minimum 89.0 MHz
-Setting end to tuner maximum 91.0 MHz
-Scanning range: 89.0 - 91.0 MHz (0.1 MHz increments)...
-89.6: 97.7%
-90.4: 76.3%
-90.5: 61.0%
+AT_CHECK([RUN_FMSCAN -i 0.05], [0], 
+[Setting start to tuner minimum 89.00 MHz
+Setting end to tuner maximum 91.00 MHz
+Scanning range: 89.00 - 91.00 MHz (0.05 MHz increments)...
+89.60: 97.7%
+89.65: 97.7%
+90.35: 76.3%
+90.40: 76.3%
+90.50: 61.0%
 ])
 AT_CLEANUP
 
 AT_SETUP([specified threshold])
-AT_CHECK([RUN_FMSCAN -t 90], [0], [Setting start to tuner minimum 89.0 MHz
-Setting end to tuner maximum 91.0 MHz
-Scanning range: 89.0 - 91.0 MHz (0.2 MHz increments)...
-89.6: 97.7%
+AT_CHECK([RUN_FMSCAN -t 90], [0], [Setting start to tuner minimum 89.00 MHz
+Setting end to tuner maximum 91.00 MHz
+Scanning range: 89.00 - 91.00 MHz (0.20 MHz increments)...
+89.60: 97.7%
 ])
 AT_CLEANUP
 
 AT_SETUP([override range])
 AT_CHECK([RUN_FMSCAN -o], [0], 
-[Scanning range: 87.9 - 107.9 MHz (0.2 MHz increments)...
-90.5: 61.0%
+[Scanning range: 87.90 - 107.90 MHz (0.20 MHz increments)...
+90.50: 61.0%
 ])
 AT_CLEANUP

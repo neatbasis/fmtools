@@ -115,17 +115,17 @@ int main(int argc, char **argv)
                 double max = tuner_get_max_freq(&tuner) / 16000.0;
                 if (begval < min) {
                         begval = min;
-                        printf("Setting start to tuner minimum %.1f MHz\n",
+                        printf("Setting start to tuner minimum %.2f MHz\n",
                                begval);
                 }
                 if (endval > max) {
                         endval = max;
-                        printf("Setting end to tuner maximum %.1f MHz\n",
+                        printf("Setting end to tuner maximum %.2f MHz\n",
                                endval);
                 }
         }
 
-	printf("Scanning range: %2.1f - %2.1f MHz (%2.1f MHz increments)...\n",
+	printf("Scanning range: %2.2f - %2.2f MHz (%2.2f MHz increments)...\n",
                begval, endval, incval);
 
 	for (i = 0; (mhz = begval + i * incval) <= endval; i++) {
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
                 tuner_set_freq(&tuner, freq, override);
 
                 if (!quiet) {
-                        printf("%2.1f:\r", mhz);
+                        printf("%2.2f:\r", mhz);
                         fflush(stdout);
                 }
                 tuner_usleep(&tuner, LOCKTIME);
@@ -153,7 +153,7 @@ int main(int argc, char **argv)
                         totsig += tuner_get_signal(&tuner);
 			perc = totsig / (65535.0 * (i + 1));
                         if (!quiet) {
-                                printf("%2.1f: checking: %3.1f%% (%d/%d)"
+                                printf("%2.2f: checking: %3.1f%% (%d/%d)"
                                        "    \r",
                                        mhz, perc * 100.0, i + 1, tries);
                                 fflush(stdout);
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 		perc = totsig / (65535.0 * tries);
 
 		if (perc > threshold)
-			printf("%2.1f: %3.1f%%\n",
+			printf("%2.2f: %3.1f%%\n",
                                mhz, perc * 100.0);
 	}
 
